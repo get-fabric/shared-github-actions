@@ -9,7 +9,7 @@ on:
         default: incrementPatch
 jobs:
   release:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, linux]
     if: contains(github.ref, 'refs/heads/main')
     env:
       GITHUB_TOKEN: ${{ secrets.ORG_GITHUB_ADMIN_TOKEN }}
