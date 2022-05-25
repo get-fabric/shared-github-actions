@@ -4,9 +4,7 @@ on:
     inputs:
       environment:
         type: string
-        description: Select the environment
         required: true
-        default: test.get-fabric.net
       application:
         required: true
         type: string
