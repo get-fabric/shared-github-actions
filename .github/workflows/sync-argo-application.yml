@@ -3,13 +3,10 @@ on:
   workflow_call:
     inputs:
       environment:
-        type: choice
+        type: string
         description: Select the environment
         required: true
         default: test.get-fabric.net
-        options:
-          - test.get-fabric.net
-          - prod.get-fabric.net
       application:
         required: true
         type: string
