@@ -1,0 +1,28 @@
+name: Sync argocd application
+on:
+  workflow_call:
+    inputs:
+      environment:
+        type: choice
+        description: Select the environment
+        required: true
+        default: test.get-fabric.net
+        options:
+          - test.get-fabric.net
+          - prod.get-fabric.net
+      application:
+        required: true
+        type: string
+jobs:
+  sync-argocd:
+    runs-on: self-hosted
+    steps:
+      - name: Download argocd cli
+        run: |
+          curl -sSL -o /usr/local/bin/argocd https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
+          chmod +x /usr/local/bin/argocd
+      - name: Login to argocd
+        run: |
+          argocd login ${{ inputs.environment }} --grpc-web --grpc-web-root-path argo --username ${{ secrets.ARGOCD_USER }} --password ${{ secrets.ARGOCD_PASSWORD }}
+      - name: Sync application
+        run: argocd app sync ${{ inputs.application }}
