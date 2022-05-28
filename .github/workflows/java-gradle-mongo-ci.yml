@@ -1,10 +1,6 @@
 name: CI Workflow
 on:
   workflow_call:
-    inputs:
-      buildEnvVars:
-        type: string
-        required: false
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -27,10 +23,12 @@ jobs:
         uses: gradle/gradle-build-action@v2
 
       - name: Execute Gradle build      
-        run: ${{ inputs.buildEnvVars }} gradle build --info
+        run: gradle build --info
         env:
           GITHUB_TOKEN: ${{ secrets.ORG_GITHUB_ADMIN_TOKEN }}
           SPRING_APPLICATION_JSON: ${{secrets.SPRING_APPLICATION_JSON || ''}}
+          FABRIC_AXLEHIRE_TOKEN: ${{ secrets.AXLEHIRE_TOKEN || ''}}
+          FABRIC_SHIPPO_TEST_TOKEN: ${{ secrets.SHIPPO_TEST_TOKEN || ''}}
       - name: Build Container Image
         if: contains(github.ref, 'refs/heads/main')
         uses: gradle/gradle-build-action@v2.1.0
