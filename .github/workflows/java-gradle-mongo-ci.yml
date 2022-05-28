@@ -30,6 +30,7 @@ jobs:
         run: ${{ inputs.buildEnvVars }} gradle build --info
         env:
           GITHUB_TOKEN: ${{ secrets.ORG_GITHUB_ADMIN_TOKEN }}
+          SPRING_APPLICATION_JSON: ${{secrets.SPRING_APPLICATION_JSON || ''}}
       - name: Build Container Image
         if: contains(github.ref, 'refs/heads/main')
         uses: gradle/gradle-build-action@v2.1.0
