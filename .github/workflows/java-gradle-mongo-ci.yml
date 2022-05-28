@@ -6,9 +6,9 @@ jobs:
     runs-on: ubuntu-latest
     env:
       GITHUB_TOKEN: ${{ secrets.ORG_GITHUB_ADMIN_TOKEN }}
-      SPRING_APPLICATION_JSON: ${{secrets.SPRING_APPLICATION_JSON || ''}}
-      FABRIC_AXLEHIRE_TOKEN: ${{ secrets.AXLEHIRE_TOKEN || ''}}
-      FABRIC_SHIPPO_TEST_TOKEN: ${{ secrets.SHIPPO_TEST_TOKEN || ''}}
+      SPRING_APPLICATION_JSON: ${{secrets.SPRING_APPLICATION_JSON }}
+      FABRIC_AXLEHIRE_TOKEN: ${{ secrets.AXLEHIRE_TOKEN }}
+      FABRIC_SHIPPO_TEST_TOKEN: ${{ secrets.SHIPPO_TEST_TOKEN }}
       GCR_SECRET: ${{ secrets.ORG_GCR_ADMIN_JSON }}
     steps:
       - name: Checkout
