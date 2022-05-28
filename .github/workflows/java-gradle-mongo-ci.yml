@@ -4,6 +4,12 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: ${{ secrets.ORG_GITHUB_ADMIN_TOKEN }}
+      SPRING_APPLICATION_JSON: ${{secrets.SPRING_APPLICATION_JSON || ''}}
+      FABRIC_AXLEHIRE_TOKEN: ${{ secrets.AXLEHIRE_TOKEN || ''}}
+      FABRIC_SHIPPO_TEST_TOKEN: ${{ secrets.SHIPPO_TEST_TOKEN || ''}}
+      GCR_SECRET: ${{ secrets.ORG_GCR_ADMIN_JSON }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -21,20 +27,11 @@ jobs:
           distribution: 'temurin'
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
-
       - name: Execute Gradle build      
         run: gradle build --info
-        env:
-          GITHUB_TOKEN: ${{ secrets.ORG_GITHUB_ADMIN_TOKEN }}
-          SPRING_APPLICATION_JSON: ${{secrets.SPRING_APPLICATION_JSON || ''}}
-          FABRIC_AXLEHIRE_TOKEN: ${{ secrets.AXLEHIRE_TOKEN || ''}}
-          FABRIC_SHIPPO_TEST_TOKEN: ${{ secrets.SHIPPO_TEST_TOKEN || ''}}
       - name: Build Container Image
         if: contains(github.ref, 'refs/heads/main')
         uses: gradle/gradle-build-action@v2.1.0
-        env:
-          GITHUB_TOKEN: ${{ secrets.ORG_GITHUB_ADMIN_TOKEN }}
-          GCR_SECRET: ${{ secrets.ORG_GCR_ADMIN_JSON }}
         with:
           arguments: bootBuildImage --publishImage --pullPolicy=IF_NOT_PRESENT
       - name: Update Helm Values
