@@ -32,7 +32,7 @@ jobs:
       - name: Build Container Image
         uses: gradle/gradle-build-action@v2.1.0
         with:
-          arguments: assemble bootBuildImage --publishImage
+          arguments: assemble bootBuildImage --publishImage --pullPolicy=IF_NOT_PRESENT
 
       - name: Push Release
         uses: gradle/gradle-build-action@v2.1.3
