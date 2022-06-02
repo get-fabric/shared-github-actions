@@ -1,0 +1,26 @@
+# action.yml
+name: 'ArgoCD Parameter Overrides - image tag and git sha'
+
+description: 'Override the container image tag and GIT sha parameters of Argo CD applications'
+
+inputs:
+  server:
+    description: "Argo server address"
+    required: true
+  username:
+    description: 'Username'
+    required: true
+  password:
+    description: 'Password'
+    required: true
+  imageTag:
+    description: 'Image Tag'
+    required: true    
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    - ${{ inputs.server }}
+    - ${{ inputs.username }}
+    - ${{ inputs.password }}
+    - ${{ inputs.imageTag }}

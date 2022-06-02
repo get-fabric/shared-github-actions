@@ -1,14 +1,6 @@
 name: CI Workflow
 on:
   workflow_call:
-    inputs:
-      environment:
-        type: string
-        required: true
-      application:
-        required: true
-        type: string
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -47,13 +39,16 @@ jobs:
         uses: gradle/gradle-build-action@v2.1.0
         with:
           arguments: bootBuildImage --publishImage --pullPolicy=IF_NOT_PRESENT
-      
-      - name: Download argocd cli
-        run: |
-          curl -sSL -o /usr/local/bin/argocd https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
-          chmod +x /usr/local/bin/argocd
 
-      - name: Trigger ArgoCD to update Kubernetes deployment
-        run: |
-          argocd login test.get-fabric.net --grpc-web --grpc-web-root-path argo --username ${{ secrets.ARGOCD_USER }} --password ${{ secrets.ARGOCD_PASSWORD }}
-          argocd app set ${{ inputs.application }} -p fabric-chart.podLabels.gitHash=$GITHUB_SHA
+      - name: Set application version on environment variable
+        if: contains(github.ref, 'refs/heads/main')
+        run: echo "GRADLE_SERVICE_VERSION=$(gradle properties -q | grep "version:" | awk '{print $2}')" >> $GITHUB_ENV
+
+      - name: Override GIT sha and container image tag in ArgoCD application
+        if: contains(github.ref, 'refs/heads/main')
+        uses: get-fabric/shared-github-actions/.github/actions/argocd-parameter-overrides@argocd
+        with:
+          server: test.get-fabric.net
+          username: ${{ secrets.ORG_ARGOCD_USERNAME }}
+          password: ${{ secrets.ORG_ARGOCD_PASSWORD }}
+          imageTag: ${{ env.GRADLE_SERVICE_VERSION }}
