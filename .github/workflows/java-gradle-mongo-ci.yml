@@ -15,32 +15,40 @@ jobs:
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
+
       - name: Start MongoDB
         uses: supercharge/mongodb-github-action@1.7.0
         with:
           mongodb-version: 5.0
           mongodb-replica-set: test-rs
+
       - name: Set up JDK 17
         uses: actions/setup-java@v2
         with:
           java-version: '17'
           distribution: 'temurin'
+
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
+
       - name: Execute Gradle build      
         run: gradle build --info
+
       - name: Build Container Image
         if: contains(github.ref, 'refs/heads/main')
         uses: gradle/gradle-build-action@v2.1.0
         with:
           arguments: bootBuildImage --publishImage --pullPolicy=IF_NOT_PRESENT
-      - name: Update Helm Values
+
+      - name: Set application version on environment variable
         if: contains(github.ref, 'refs/heads/main')
-        uses: gradle/gradle-build-action@v2.1.0
-        with:
-          arguments: updateHelmValues
-      - uses: EndBug/add-and-commit@v7.5.0
+        run: echo "GRADLE_SERVICE_VERSION=$(gradle properties -q | grep "version:" | awk '{print $2}')" >> $GITHUB_ENV
+
+      - name: Override GIT sha and container image tag in ArgoCD application
         if: contains(github.ref, 'refs/heads/main')
+        uses: get-fabric/shared-github-actions/.github/actions/argocd-parameter-overrides@argocd
         with:
-          message: 'Update deployment/values.test.yaml to trigger ARGO CD sync'
-          default_author: github_actions
+          server: test.get-fabric.net
+          username: ${{ secrets.ORG_ARGOCD_USERNAME }}
+          password: ${{ secrets.ORG_ARGOCD_PASSWORD }}
+          imageTag: ${{ env.GRADLE_SERVICE_VERSION }}
