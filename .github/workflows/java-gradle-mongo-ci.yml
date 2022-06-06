@@ -46,7 +46,7 @@ jobs:
 
       - name: Override GIT sha and container image tag in ArgoCD application
         if: contains(github.ref, 'refs/heads/main')
-        uses: get-fabric/shared-github-actions/.github/actions/argocd-parameter-overrides@argocd
+        uses: get-fabric/shared-github-actions/.github/actions/argocd-parameter-overrides@main
         with:
           server: test.get-fabric.net
           username: ${{ secrets.ORG_ARGOCD_USERNAME }}
