@@ -34,6 +34,18 @@ jobs:
       - name: Execute Gradle build      
         run: gradle build --info
 
+      - uses: actions/upload-artifact@v2
+        if: always()
+        with:
+          name: Archive Test Results
+          path: build/reports/tests/test
+
+      - name: Publish Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v1
+        if: always()
+        with:
+          files: "build/test-results/**/*.xml"
+
       - name: Build Container Image
         if: contains(github.ref, 'refs/heads/main')
         uses: gradle/gradle-build-action@v2.1.0
