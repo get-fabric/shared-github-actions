@@ -35,10 +35,11 @@ jobs:
         run: gradle build --info
 
       - uses: actions/upload-artifact@v2
-        if: always()
+        if: failure()
         with:
-          name: Archive Test Results
+          name: Archive JUnit Results
           path: build/reports/tests/test
+          retention-days: 5
 
       - name: Publish Test Results
         uses: EnricoMi/publish-unit-test-result-action@v1
