@@ -51,7 +51,7 @@ jobs:
         if: contains(github.ref, 'refs/heads/main')
         uses: gradle/gradle-build-action@v2.1.0
         with:
-          arguments: bootBuildImage --publishImage --pullPolicy=IF_NOT_PRESENT -PoverrideVersion=latest
+          arguments: bootBuildImage --publishImage --pullPolicy=IF_NOT_PRESENT -PoverrideImageTag=latest
 
       - name: Override GIT sha and container image tag in ArgoCD application
         if: contains(github.ref, 'refs/heads/main')
