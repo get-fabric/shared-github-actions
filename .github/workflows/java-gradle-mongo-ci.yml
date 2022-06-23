@@ -51,11 +51,7 @@ jobs:
         if: contains(github.ref, 'refs/heads/main')
         uses: gradle/gradle-build-action@v2.1.0
         with:
-          arguments: bootBuildImage --publishImage --pullPolicy=IF_NOT_PRESENT
-
-      - name: Set application version on environment variable
-        if: contains(github.ref, 'refs/heads/main')
-        run: echo "GRADLE_SERVICE_VERSION=$(gradle properties -q | grep "version:" | awk '{print $2}')" >> $GITHUB_ENV
+          arguments: bootBuildImage --publishImage --pullPolicy=IF_NOT_PRESENT -PoverrideVersion=latest
 
       - name: Override GIT sha and container image tag in ArgoCD application
         if: contains(github.ref, 'refs/heads/main')
@@ -64,4 +60,4 @@ jobs:
           server: test.get-fabric.net
           username: ${{ secrets.ORG_ARGOCD_USERNAME }}
           password: ${{ secrets.ORG_ARGOCD_PASSWORD }}
-          imageTag: ${{ env.GRADLE_SERVICE_VERSION }}
+          imageTag: latest
